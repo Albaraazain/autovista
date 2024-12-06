@@ -1,0 +1,18 @@
+{
+    "sourceFile": "lib/repositories/firebase/firebase_auth_repository.dart",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 0,
+            "patches": [
+                {
+                    "date": 1733505545520,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                }
+            ],
+            "date": 1733505545520,
+            "name": "Commit-0",
+            "content": "// lib/repositories/firebase/firebase_auth_repository.dart\r\nimport 'package:firebase_auth/firebase_auth.dart';\r\nimport 'package:cloud_firestore/cloud_firestore.dart';\r\nimport '../interfaces/auth_repository.dart';\r\n\r\nclass FirebaseAuthRepository implements AuthRepository {\r\n  final FirebaseAuth _auth;\r\n  final FirebaseFirestore _firestore;\r\n\r\n  FirebaseAuthRepository({\r\n    FirebaseAuth? auth,\r\n    FirebaseFirestore? firestore,\r\n  })  : _auth = auth ?? FirebaseAuth.instance,\r\n        _firestore = firestore ?? FirebaseFirestore.instance;\r\n\r\n  @override\r\n  Stream<User?> get authStateChanges => _auth.authStateChanges();\r\n\r\n  @override\r\n  User? get currentUser => _auth.currentUser;\r\n\r\n  @override\r\n  Future<UserCredential> signIn({\r\n    required String email,\r\n    required String password,\r\n  }) async {\r\n    try {\r\n      final userCredential = await _auth.signInWithEmailAndPassword(\r\n        email: email.trim(),\r\n        password: password,\r\n      );\r\n      return userCredential;\r\n    } catch (e) {\r\n      print('Sign in error: $e');\r\n      rethrow;\r\n    }\r\n  }\r\n\r\n  @override\r\n  Future<UserCredential> signUp({\r\n    required String email,\r\n    required String password,\r\n    required String name,\r\n    required String location,\r\n  }) async {\r\n    try {\r\n      final userCredential = await _auth.createUserWithEmailAndPassword(\r\n        email: email.trim(),\r\n        password: password,\r\n      );\r\n\r\n      if (userCredential.user != null) {\r\n        await _firestore.collection('users').doc(userCredential.user!.uid).set({\r\n          'uid': userCredential.user!.uid,\r\n          'name': name.trim(),\r\n          'email': email.trim(),\r\n          'location': location.trim(),\r\n          'created_at': FieldValue.serverTimestamp(),\r\n        });\r\n\r\n        await userCredential.user!.updateDisplayName(name.trim());\r\n      }\r\n\r\n      return userCredential;\r\n    } catch (e) {\r\n      print('Sign up error: $e');\r\n      rethrow;\r\n    }\r\n  }\r\n\r\n  @override\r\n  Future<void> signOut() async {\r\n    try {\r\n      await _auth.signOut();\r\n    } catch (e) {\r\n      print('Sign out error: $e');\r\n      rethrow;\r\n    }\r\n  }\r\n}\r\n"
+        }
+    ]
+}

@@ -1,0 +1,18 @@
+{
+    "sourceFile": "lib/repositories/interfaces/auth_repository.dart",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 0,
+            "patches": [
+                {
+                    "date": 1733505506582,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                }
+            ],
+            "date": 1733505506581,
+            "name": "Commit-0",
+            "content": "// lib/repositories/interfaces/auth_repository.dart\r\nimport 'package:firebase_auth/firebase_auth.dart';\r\n\r\nabstract class AuthRepository {\r\n  // Authentication state\r\n  Stream<User?> get authStateChanges;\r\n\r\n  // Sign in\r\n  Future<UserCredential> signIn({\r\n    required String email,\r\n    required String password,\r\n  });\r\n\r\n  // Sign up\r\n  Future<UserCredential> signUp({\r\n    required String email,\r\n    required String password,\r\n    required String name,\r\n    required String location,\r\n  });\r\n\r\n  // Sign out\r\n  Future<void> signOut();\r\n\r\n  // Get current user\r\n  User? get currentUser;\r\n}\r\n"
+        }
+    ]
+}
