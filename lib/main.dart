@@ -1,10 +1,11 @@
-import 'package:autovista/screens/profile_screen.dart';
+// lib/main.dart
 import 'package:flutter/material.dart';
-// import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-
+import 'package:provider/provider.dart';
+import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'config/firebase_initialize.dart';
-
+import 'repositories/firebase/firebase_auth_repository.dart';
+import 'repositories/interfaces/auth_repository.dart';
+import 'providers/auth_provider.dart';
 import 'screens/login_screen.dart';
 import 'screens/signup_screen.dart';
 import 'screens/home_screen.dart';
@@ -27,81 +28,65 @@ class AutoVistaApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'AutoVista',
-      theme: AppTheme.lightTheme,
-      home: const AuthWrapper(),
-      onGenerateRoute: (RouteSettings settings) {
-        switch (settings.name) {
-          case '/login':
-            return MaterialPageRoute(builder: (_) => const LoginScreen());
-
-          case '/signup':
-            return MaterialPageRoute(builder: (_) => const SignupScreen());
-
-          case '/home':
-            final String? userId = settings.arguments as String?;
-            if (userId != null) {
+    return MultiProvider(
+      providers: [
+        // Provide the AuthRepository
+        Provider<AuthRepository>(
+          create: (_) => FirebaseAuthRepository(),
+        ),
+        // Provide the AuthProvider which uses AuthRepository
+        ChangeNotifierProxyProvider<AuthRepository, AuthProvider>(
+          create: (context) => AuthProvider(context.read<AuthRepository>()),
+          update: (context, authRepository, previous) =>
+            previous ?? AuthProvider(authRepository),
+        ),
+      ],
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: 'AutoVista',
+        theme: AppTheme.lightTheme,
+        home: const AuthWrapper(),
+        onGenerateRoute: (RouteSettings settings) {
+          switch (settings.name) {
+            case '/login':
+              return MaterialPageRoute(builder: (_) => const LoginScreen());
+            case '/signup':
+              return MaterialPageRoute(builder: (_) => const SignupScreen());
+            case '/home':
+              final String? userId = settings.arguments as String?;
+              if (userId != null) {
+                return MaterialPageRoute(builder: (_) => HomeScreen(userId: userId));
+              }
+              return _errorRoute("Missing or invalid 'userId' for HomeScreen");
+            case '/viewVehicle':
+              final Map<String, dynamic>? args = settings.arguments as Map<String, dynamic>?;
+              if (args != null && args['userId'] is String) {
+                final String userId = args['userId'] as String;
+                final Map<String, dynamic>? vehicleData = args['vehicleData'] as Map<String, dynamic>?;
+                return MaterialPageRoute(
+                  builder: (_) => ViewVehicleScreen(userId: userId, vehicleData: vehicleData),
+                );
+              }
+              return _errorRoute("Missing or invalid arguments for ViewVehicleScreen");
+            case '/viewDocuments':
               return MaterialPageRoute(
-                  builder: (_) => HomeScreen(userId: userId));
-            }
-            return _errorRoute("Missing or invalid 'userId' for HomeScreen");
-
-          case '/viewVehicle':
-            // Handle both String and Map arguments
-            String? userId;
-            Map<String, dynamic>? vehicleData;
-
-            if (settings.arguments is String) {
-              userId = settings.arguments as String;
-            } else if (settings.arguments is Map<String, dynamic>) {
-              final args = settings.arguments as Map<String, dynamic>;
-              userId = args['userId'] as String?;
-              vehicleData = args['vehicleData'] as Map<String, dynamic>?;
-            }
-            if (userId != null) {
-              return MaterialPageRoute(
-                builder: (_) => ViewVehicleScreen(
-                  userId: userId!,
-                  vehicleData: vehicleData,
+                builder: (_) => Scaffold(
+                  appBar: AppBar(title: const Text('Documents')),
+                  body: const Center(child: Text('Documents feature coming soon')),
                 ),
               );
-            }
-            return _errorRoute(
-                "Missing or invalid arguments for ViewVehicleScreen");
-
-          case '/profile':
-            final String? userId = settings.arguments as String?;
-            if (userId != null) {
-              return MaterialPageRoute(builder: (_) => ProfileScreen());
-            }
-            return _errorRoute("Missing or invalid 'userId' for ProfileScreen");
-
-          case '/viewDocuments':
-            return MaterialPageRoute(
-              builder: (_) => Scaffold(
-                appBar: AppBar(title: const Text('Documents')),
-                body: const Center(
-                  child: Text('Documents feature coming soon!'),
+            case '/eventScreen':
+              return MaterialPageRoute(
+                builder: (_) => Scaffold(
+                  appBar: AppBar(title: const Text('Events')),
+                  body: const Center(child: Text('Events feature coming soon')),
                 ),
-              ),
-            );
-
-          case '/eventScreen':
-            return MaterialPageRoute(
-              builder: (_) => Scaffold(
-                appBar: AppBar(title: const Text('Events')),
-                body: const Center(
-                  child: Text('Event planning feature coming soon!'),
-                ),
-              ),
-            );
-
-          default:
-            return _errorRoute("Unknown route: ${settings.name}");
-        }
-      },
+              );
+            default:
+              return _errorRoute("Unknown route: ${settings.name}");
+          }
+        },
+      ),
     );
   }
 
@@ -126,34 +111,34 @@ class AuthWrapper extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<User?>(
-      stream: FirebaseAuth.instance
-          .authStateChanges(), // Listen to auth state changes
-      builder: (BuildContext context, AsyncSnapshot<User?> snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Scaffold(
-            body: Center(
-              child: CircularProgressIndicator(), // Show a loading spinner
-            ),
-          );
-        } else if (snapshot.hasError) {
-          return Scaffold(
-            appBar: AppBar(title: const Text("Error")),
-            body: Center(
-              child: Text(
-                "An error occurred: ${snapshot.error}",
-                style: const TextStyle(fontSize: 18, color: Colors.red),
-              ),
-            ),
-          );
-        } else if (snapshot.hasData) {
-          // If user is logged in, navigate to HomeScreen
-          return HomeScreen(
-              userId: snapshot.data!.uid); // Pass the Firebase UID
-        } else {
-          // If user is not logged in, navigate to LoginScreen
-          return const LoginScreen();
-        }
+    return Consumer<AuthProvider>(
+      builder: (context, authProvider, _) {
+        return StreamBuilder<firebase_auth.User?>(
+          stream: authProvider.authStateChanges,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Scaffold(
+                body: Center(
+                  child: CircularProgressIndicator(),
+                ),
+              );
+            } else if (snapshot.hasError) {
+              return Scaffold(
+                appBar: AppBar(title: const Text("Error")),
+                body: Center(
+                  child: Text(
+                    "An error occurred: ${snapshot.error}",
+                    style: const TextStyle(fontSize: 18, color: Colors.red),
+                  ),
+                ),
+              );
+            } else if (snapshot.hasData) {
+              return HomeScreen(userId: snapshot.data!.uid);
+            } else {
+              return const LoginScreen();
+            }
+          },
+        );
       },
     );
   }

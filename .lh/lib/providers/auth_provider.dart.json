@@ -1,0 +1,18 @@
+{
+    "sourceFile": "lib/providers/auth_provider.dart",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 0,
+            "patches": [
+                {
+                    "date": 1733505740226,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                }
+            ],
+            "date": 1733505740226,
+            "name": "Commit-0",
+            "content": "// lib/providers/auth_provider.dart\r\nimport 'package:flutter/foundation.dart';\r\nimport 'package:firebase_auth/firebase_auth.dart';\r\nimport '../repositories/interfaces/auth_repository.dart';\r\n\r\nclass AuthProvider extends ChangeNotifier {\r\n  final AuthRepository _authRepository;\r\n  bool _isLoading = false;\r\n\r\n  AuthProvider(this._authRepository);\r\n\r\n  bool get isLoading => _isLoading;\r\n  User? get currentUser => _authRepository.currentUser;\r\n  Stream<User?> get authStateChanges => _authRepository.authStateChanges;\r\n\r\n  Future<void> signIn(String email, String password) async {\r\n    _isLoading = true;\r\n    notifyListeners();\r\n\r\n    try {\r\n      await _authRepository.signIn(\r\n        email: email,\r\n        password: password,\r\n      );\r\n    } finally {\r\n      _isLoading = false;\r\n      notifyListeners();\r\n    }\r\n  }\r\n\r\n  Future<void> signUp({\r\n    required String email,\r\n    required String password,\r\n    required String name,\r\n    required String location,\r\n  }) async {\r\n    _isLoading = true;\r\n    notifyListeners();\r\n\r\n    try {\r\n      await _authRepository.signUp(\r\n        email: email,\r\n        password: password,\r\n        name: name,\r\n        location: location,\r\n      );\r\n    } finally {\r\n      _isLoading = false;\r\n      notifyListeners();\r\n    }\r\n  }\r\n\r\n  Future<void> signOut() async {\r\n    await _authRepository.signOut();\r\n  }\r\n}"
+        }
+    ]
+}

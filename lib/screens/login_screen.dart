@@ -1,6 +1,8 @@
+// lib/screens/login_screen.dart
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart' hide AuthProvider;
+import 'package:provider/provider.dart';
+import '../providers/auth_provider.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -13,44 +15,20 @@ class _LoginScreenState extends State<LoginScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
-  final FirebaseAuth _auth = FirebaseAuth.instance; // Firebase Auth instance
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance; // Firestore instance
 
-  bool _isLoading = false;
-
-  Future<void> _loginUser() async {
-    setState(() {
-      _isLoading = true; // Show loading indicator
-    });
+  Future<void> _loginUser(BuildContext context) async {
+    if (!_formKey.currentState!.validate()) return;
 
     try {
-      // Log in user with Firebase
-      UserCredential userCredential = await _auth.signInWithEmailAndPassword(
-        email: _emailController.text.trim(),
-        password: _passwordController.text.trim(),
+      final authProvider = context.read<AuthProvider>();
+      await authProvider.signIn(
+        _emailController.text.trim(),
+        _passwordController.text,
       );
 
-      // Fetch user details from Firestore
-      final User? user = userCredential.user;
-      if (user != null) {
-        final DocumentSnapshot userDoc =
-        await _firestore.collection('users').doc(user.uid).get();
+      if (!mounted) return;
 
-        if (userDoc.exists) {
-          final userData = userDoc.data() as Map<String, dynamic>;
-          print("User Data: $userData");
-        } else {
-          throw Exception("User data not found in Firestore.");
-        }
-      }
-
-      // Navigate to HomeScreen, passing the Firebase UID
-      Navigator.pushReplacementNamed(
-        context,
-        '/home',
-        arguments: user?.uid, // Pass Firebase UID to HomeScreen
-      );
-
+      // Success message
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Login successful!")),
       );
@@ -71,15 +49,13 @@ class _LoginScreenState extends State<LoginScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("An error occurred: $e")),
       );
-    } finally {
-      setState(() {
-        _isLoading = false; // Hide loading indicator
-      });
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final authProvider = context.watch<AuthProvider>();
+
     return Scaffold(
       appBar: AppBar(title: const Text("Login")),
       body: Padding(
@@ -118,16 +94,12 @@ class _LoginScreenState extends State<LoginScreen> {
                   },
                 ),
                 const SizedBox(height: 32),
-                _isLoading
+                authProvider.isLoading
                     ? const CircularProgressIndicator()
                     : ElevatedButton(
-                  onPressed: () async {
-                    if (_formKey.currentState!.validate()) {
-                      await _loginUser();
-                    }
-                  },
-                  child: const Text("Login"),
-                ),
+                        onPressed: () => _loginUser(context),
+                        child: const Text("Login"),
+                      ),
                 const SizedBox(height: 16),
                 TextButton(
                   onPressed: () {
