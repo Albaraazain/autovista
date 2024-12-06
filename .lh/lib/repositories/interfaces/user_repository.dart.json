@@ -1,0 +1,18 @@
+{
+    "sourceFile": "lib/repositories/interfaces/user_repository.dart",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 0,
+            "patches": [
+                {
+                    "date": 1733506967043,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                }
+            ],
+            "date": 1733506967043,
+            "name": "Commit-0",
+            "content": "// lib/repositories/interfaces/user_repository.dart\r\nimport '../../models/user_model.dart';\r\n\r\nabstract class UserRepository {\r\n  Future<UserModel?> getUserById(String uid);\r\n  Future<void> updateUser(UserModel user);\r\n  Future<void> deleteUser(String uid);\r\n  Future<String> getUserName(String uid);\r\n}\r\n"
+        }
+    ]
+}

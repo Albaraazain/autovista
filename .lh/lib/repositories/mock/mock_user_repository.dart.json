@@ -1,0 +1,18 @@
+{
+    "sourceFile": "lib/repositories/mock/mock_user_repository.dart",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 0,
+            "patches": [
+                {
+                    "date": 1733507032567,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                }
+            ],
+            "date": 1733507032567,
+            "name": "Commit-0",
+            "content": "// lib/repositories/mock/mock_user_repository.dart\r\nimport '../interfaces/user_repository.dart';\r\nimport '../../models/user_model.dart';\r\n\r\nclass MockUserRepository implements UserRepository {\r\n  final Map<String, UserModel> _users = {};\r\n\r\n  @override\r\n  Future<UserModel?> getUserById(String uid) async {\r\n    await Future.delayed(const Duration(milliseconds: 500)); // Simulate network delay\r\n    return _users[uid];\r\n  }\r\n\r\n  @override\r\n  Future<String> getUserName(String uid) async {\r\n    await Future.delayed(const Duration(milliseconds: 500));\r\n    return _users[uid]?.name ?? 'Mock User';\r\n  }\r\n\r\n  @override\r\n  Future<void> updateUser(UserModel user) async {\r\n    await Future.delayed(const Duration(milliseconds: 500));\r\n    _users[user.uid] = user;\r\n  }\r\n\r\n  @override\r\n  Future<void> deleteUser(String uid) async {\r\n    await Future.delayed(const Duration(milliseconds: 500));\r\n    _users.remove(uid);\r\n  }\r\n}"
+        }
+    ]
+}

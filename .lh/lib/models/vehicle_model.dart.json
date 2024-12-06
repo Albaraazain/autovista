@@ -1,0 +1,18 @@
+{
+    "sourceFile": "lib/models/vehicle_model.dart",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 0,
+            "patches": [
+                {
+                    "date": 1733507519338,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                }
+            ],
+            "date": 1733507519338,
+            "name": "Commit-0",
+            "content": "// lib/models/vehicle_model.dart\r\nclass VehicleModel {\r\n  final String id;\r\n  final String userId;\r\n  final String brand;\r\n  final String model;\r\n  final String engineType;\r\n  final int mileage;\r\n  final String region;\r\n  final int makeYear;\r\n\r\n  VehicleModel({\r\n    required this.id,\r\n    required this.userId,\r\n    required this.brand,\r\n    required this.model,\r\n    required this.engineType,\r\n    required this.mileage,\r\n    required this.region,\r\n    required this.makeYear,\r\n  });\r\n\r\n  Map<String, dynamic> toMap() {\r\n    return {\r\n      'id': id,\r\n      'user_id': userId,\r\n      'brand': brand,\r\n      'model': model,\r\n      'engine_type': engineType,\r\n      'mileage': mileage,\r\n      'region': region,\r\n      'make_year': makeYear,\r\n    };\r\n  }\r\n\r\n  factory VehicleModel.fromMap(Map<String, dynamic> map) {\r\n    return VehicleModel(\r\n      id: map['id'] as String,\r\n      userId: map['user_id'] as String,\r\n      brand: map['brand'] as String,\r\n      model: map['model'] as String,\r\n      engineType: map['engine_type'] as String,\r\n      mileage: map['mileage'] as int,\r\n      region: map['region'] as String,\r\n      makeYear: map['make_year'] as int,\r\n    );\r\n  }\r\n}\r\n"
+        }
+    ]
+}

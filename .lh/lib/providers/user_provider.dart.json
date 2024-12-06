@@ -1,0 +1,18 @@
+{
+    "sourceFile": "lib/providers/user_provider.dart",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 0,
+            "patches": [
+                {
+                    "date": 1733507059691,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                }
+            ],
+            "date": 1733507059691,
+            "name": "Commit-0",
+            "content": "// lib/providers/user_provider.dart\r\nimport 'package:flutter/foundation.dart';\r\nimport '../repositories/interfaces/user_repository.dart';\r\nimport '../models/user_model.dart';\r\n\r\nclass UserProvider extends ChangeNotifier {\r\n  final UserRepository _userRepository;\r\n  UserModel? _currentUser;\r\n  bool _isLoading = false;\r\n\r\n  UserProvider(this._userRepository);\r\n\r\n  UserModel? get currentUser => _currentUser;\r\n  bool get isLoading => _isLoading;\r\n\r\n  Future<void> loadUser(String uid) async {\r\n    _isLoading = true;\r\n    notifyListeners();\r\n\r\n    try {\r\n      _currentUser = await _userRepository.getUserById(uid);\r\n    } finally {\r\n      _isLoading = false;\r\n      notifyListeners();\r\n    }\r\n  }\r\n\r\n  Future<String> getUserName(String uid) async {\r\n    return await _userRepository.getUserName(uid);\r\n  }\r\n\r\n  Future<void> updateUser(UserModel user) async {\r\n    _isLoading = true;\r\n    notifyListeners();\r\n\r\n    try {\r\n      await _userRepository.updateUser(user);\r\n      _currentUser = user;\r\n    } finally {\r\n      _isLoading = false;\r\n      notifyListeners();\r\n    }\r\n  }\r\n\r\n  Future<void> deleteUser(String uid) async {\r\n    _isLoading = true;\r\n    notifyListeners();\r\n\r\n    try {\r\n      await _userRepository.deleteUser(uid);\r\n      _currentUser = null;\r\n    } finally {\r\n      _isLoading = false;\r\n      notifyListeners();\r\n    }\r\n  }\r\n}"
+        }
+    ]
+}

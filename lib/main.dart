@@ -4,8 +4,11 @@ import 'package:provider/provider.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'config/firebase_initialize.dart';
 import 'repositories/firebase/firebase_auth_repository.dart';
+import 'repositories/firebase/firebase_user_repository.dart';  // Add this import
 import 'repositories/interfaces/auth_repository.dart';
+import 'repositories/interfaces/user_repository.dart';  // Add this import
 import 'providers/auth_provider.dart';
+import 'providers/user_provider.dart';  // Add this import
 import 'screens/login_screen.dart';
 import 'screens/signup_screen.dart';
 import 'screens/home_screen.dart';
@@ -30,15 +33,24 @@ class AutoVistaApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        // Provide the AuthRepository
+        // Repositories
         Provider<AuthRepository>(
           create: (_) => FirebaseAuthRepository(),
         ),
-        // Provide the AuthProvider which uses AuthRepository
+        Provider<UserRepository>(
+          create: (_) => FirebaseUserRepository(),
+        ),
+
+        // Providers
         ChangeNotifierProxyProvider<AuthRepository, AuthProvider>(
           create: (context) => AuthProvider(context.read<AuthRepository>()),
           update: (context, authRepository, previous) =>
             previous ?? AuthProvider(authRepository),
+        ),
+        ChangeNotifierProxyProvider<UserRepository, UserProvider>(
+          create: (context) => UserProvider(context.read<UserRepository>()),
+          update: (context, userRepository, previous) =>
+            previous ?? UserProvider(userRepository),
         ),
       ],
       child: MaterialApp(
