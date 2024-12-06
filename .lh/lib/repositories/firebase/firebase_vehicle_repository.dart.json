@@ -1,0 +1,18 @@
+{
+    "sourceFile": "lib/repositories/firebase/firebase_vehicle_repository.dart",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 0,
+            "patches": [
+                {
+                    "date": 1733507837335,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                }
+            ],
+            "date": 1733507837335,
+            "name": "Commit-0",
+            "content": "// lib/repositories/firebase/firebase_vehicle_repository.dart\r\nimport 'package:cloud_firestore/cloud_firestore.dart';\r\nimport '../interfaces/vehicle_repository.dart';\r\nimport '../../models/vehicle_model.dart';\r\n\r\nclass FirebaseVehicleRepository implements VehicleRepository {\r\n  final FirebaseFirestore _firestore;\r\n\r\n  FirebaseVehicleRepository({FirebaseFirestore? firestore})\r\n      : _firestore = firestore ?? FirebaseFirestore.instance;\r\n\r\n  @override\r\n  Future<List<VehicleModel>> getVehiclesByUserId(String userId) async {\r\n    try {\r\n      final snapshot = await _firestore\r\n          .collection('vehicles')\r\n          .where('user_id', isEqualTo: userId)\r\n          .get();\r\n\r\n      return snapshot.docs\r\n          .map((doc) => VehicleModel.fromMap({\r\n                ...doc.data(),\r\n                'id': doc.id,\r\n              }))\r\n          .toList();\r\n    } catch (e) {\r\n      print('Error getting vehicles: $e');\r\n      rethrow;\r\n    }\r\n  }\r\n\r\n  @override\r\n  Future<VehicleModel?> getVehicleById(String vehicleId) async {\r\n    try {\r\n      final doc = await _firestore.collection('vehicles').doc(vehicleId).get();\r\n      if (doc.exists) {\r\n        return VehicleModel.fromMap({\r\n          ...doc.data()!,\r\n          'id': doc.id,\r\n        });\r\n      }\r\n      return null;\r\n    } catch (e) {\r\n      print('Error getting vehicle: $e');\r\n      rethrow;\r\n    }\r\n  }\r\n\r\n  @override\r\n  Future<VehicleModel> addVehicle(VehicleModel vehicle) async {\r\n    try {\r\n      final docRef = await _firestore.collection('vehicles').add(vehicle.toMap());\r\n      return vehicle;\r\n    } catch (e) {\r\n      print('Error adding vehicle: $e');\r\n      rethrow;\r\n    }\r\n  }\r\n\r\n  @override\r\n  Future<void> updateVehicle(VehicleModel vehicle) async {\r\n    try {\r\n      await _firestore\r\n          .collection('vehicles')\r\n          .doc(vehicle.id)\r\n          .update(vehicle.toMap());\r\n    } catch (e) {\r\n      print('Error updating vehicle: $e');\r\n      rethrow;\r\n    }\r\n  }\r\n\r\n  @override\r\n  Future<void> deleteVehicle(String vehicleId) async {\r\n    try {\r\n      await _firestore.collection('vehicles').doc(vehicleId).delete();\r\n    } catch (e) {\r\n      print('Error deleting vehicle: $e');\r\n      rethrow;\r\n    }\r\n  }\r\n}\r\n\r\n"
+        }
+    ]
+}

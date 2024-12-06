@@ -1,0 +1,18 @@
+{
+    "sourceFile": "lib/repositories/interfaces/vehicle_repository.dart",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 0,
+            "patches": [
+                {
+                    "date": 1733507698896,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                }
+            ],
+            "date": 1733507698896,
+            "name": "Commit-0",
+            "content": "// lib/repositories/interfaces/vehicle_repository.dart\r\nimport '../../models/vehicle_model.dart';\r\n\r\nabstract class VehicleRepository {\r\n  Future<List<VehicleModel>> getVehiclesByUserId(String userId);\r\n  Future<VehicleModel?> getVehicleById(String vehicleId);\r\n  Future<VehicleModel> addVehicle(VehicleModel vehicle);\r\n  Future<void> updateVehicle(VehicleModel vehicle);\r\n  Future<void> deleteVehicle(String vehicleId);\r\n}"
+        }
+    ]
+}

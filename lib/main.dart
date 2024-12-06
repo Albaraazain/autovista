@@ -1,14 +1,17 @@
 // lib/main.dart
+import 'package:autovista/providers/vehicle_provider.dart';
+import 'package:autovista/repositories/firebase/firebase_vehicle_repository.dart';
+import 'package:autovista/repositories/interfaces/vehicle_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'config/firebase_initialize.dart';
 import 'repositories/firebase/firebase_auth_repository.dart';
-import 'repositories/firebase/firebase_user_repository.dart';  // Add this import
+import 'repositories/firebase/firebase_user_repository.dart'; // Add this import
 import 'repositories/interfaces/auth_repository.dart';
-import 'repositories/interfaces/user_repository.dart';  // Add this import
+import 'repositories/interfaces/user_repository.dart'; // Add this import
 import 'providers/auth_provider.dart';
-import 'providers/user_provider.dart';  // Add this import
+import 'providers/user_provider.dart'; // Add this import
 import 'screens/login_screen.dart';
 import 'screens/signup_screen.dart';
 import 'screens/home_screen.dart';
@@ -40,17 +43,26 @@ class AutoVistaApp extends StatelessWidget {
         Provider<UserRepository>(
           create: (_) => FirebaseUserRepository(),
         ),
+        Provider<VehicleRepository>(
+          create: (_) => FirebaseVehicleRepository(),
+        ),
 
         // Providers
         ChangeNotifierProxyProvider<AuthRepository, AuthProvider>(
           create: (context) => AuthProvider(context.read<AuthRepository>()),
           update: (context, authRepository, previous) =>
-            previous ?? AuthProvider(authRepository),
+              previous ?? AuthProvider(authRepository),
         ),
         ChangeNotifierProxyProvider<UserRepository, UserProvider>(
           create: (context) => UserProvider(context.read<UserRepository>()),
           update: (context, userRepository, previous) =>
-            previous ?? UserProvider(userRepository),
+              previous ?? UserProvider(userRepository),
+        ),
+        ChangeNotifierProxyProvider<VehicleRepository, VehicleProvider>(
+          create: (context) =>
+              VehicleProvider(context.read<VehicleRepository>()),
+          update: (context, vehicleRepository, previous) =>
+              previous ?? VehicleProvider(vehicleRepository),
         ),
       ],
       child: MaterialApp(
@@ -67,24 +79,30 @@ class AutoVistaApp extends StatelessWidget {
             case '/home':
               final String? userId = settings.arguments as String?;
               if (userId != null) {
-                return MaterialPageRoute(builder: (_) => HomeScreen(userId: userId));
+                return MaterialPageRoute(
+                    builder: (_) => HomeScreen(userId: userId));
               }
               return _errorRoute("Missing or invalid 'userId' for HomeScreen");
             case '/viewVehicle':
-              final Map<String, dynamic>? args = settings.arguments as Map<String, dynamic>?;
+              final Map<String, dynamic>? args =
+                  settings.arguments as Map<String, dynamic>?;
               if (args != null && args['userId'] is String) {
                 final String userId = args['userId'] as String;
-                final Map<String, dynamic>? vehicleData = args['vehicleData'] as Map<String, dynamic>?;
+                final Map<String, dynamic>? vehicleData =
+                    args['vehicleData'] as Map<String, dynamic>?;
                 return MaterialPageRoute(
-                  builder: (_) => ViewVehicleScreen(userId: userId, vehicleData: vehicleData),
+                  builder: (_) => ViewVehicleScreen(
+                      userId: userId, vehicleData: vehicleData),
                 );
               }
-              return _errorRoute("Missing or invalid arguments for ViewVehicleScreen");
+              return _errorRoute(
+                  "Missing or invalid arguments for ViewVehicleScreen");
             case '/viewDocuments':
               return MaterialPageRoute(
                 builder: (_) => Scaffold(
                   appBar: AppBar(title: const Text('Documents')),
-                  body: const Center(child: Text('Documents feature coming soon')),
+                  body: const Center(
+                      child: Text('Documents feature coming soon')),
                 ),
               );
             case '/eventScreen':

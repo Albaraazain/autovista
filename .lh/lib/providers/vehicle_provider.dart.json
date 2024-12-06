@@ -1,0 +1,18 @@
+{
+    "sourceFile": "lib/providers/vehicle_provider.dart",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 0,
+            "patches": [
+                {
+                    "date": 1733507910264,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                }
+            ],
+            "date": 1733507910264,
+            "name": "Commit-0",
+            "content": "// lib/providers/vehicle_provider.dart\r\nimport 'package:flutter/foundation.dart';\r\nimport '../repositories/interfaces/vehicle_repository.dart';\r\nimport '../models/vehicle_model.dart';\r\n\r\nclass VehicleProvider extends ChangeNotifier {\r\n  final VehicleRepository _vehicleRepository;\r\n  List<VehicleModel> _userVehicles = [];\r\n  VehicleModel? _selectedVehicle;\r\n  bool _isLoading = false;\r\n  String? _error;\r\n\r\n  VehicleProvider(this._vehicleRepository);\r\n\r\n  List<VehicleModel> get userVehicles => _userVehicles;\r\n  VehicleModel? get selectedVehicle => _selectedVehicle;\r\n  bool get isLoading => _isLoading;\r\n  String? get error => _error;\r\n\r\n  Future<void> loadUserVehicles(String userId) async {\r\n    _isLoading = true;\r\n    _error = null;\r\n    notifyListeners();\r\n\r\n    try {\r\n      _userVehicles = await _vehicleRepository.getVehiclesByUserId(userId);\r\n    } catch (e) {\r\n      _error = 'Failed to load vehicles: $e';\r\n    } finally {\r\n      _isLoading = false;\r\n      notifyListeners();\r\n    }\r\n  }\r\n\r\n  Future<void> addVehicle(VehicleModel vehicle) async {\r\n    _isLoading = true;\r\n    _error = null;\r\n    notifyListeners();\r\n\r\n    try {\r\n      final newVehicle = await _vehicleRepository.addVehicle(vehicle);\r\n      _userVehicles.add(newVehicle);\r\n    } catch (e) {\r\n      _error = 'Failed to add vehicle: $e';\r\n    } finally {\r\n      _isLoading = false;\r\n      notifyListeners();\r\n    }\r\n  }\r\n\r\n  Future<void> updateVehicle(VehicleModel vehicle) async {\r\n    _isLoading = true;\r\n    _error = null;\r\n    notifyListeners();\r\n\r\n    try {\r\n      await _vehicleRepository.updateVehicle(vehicle);\r\n      final index = _userVehicles.indexWhere((v) => v.id == vehicle.id);\r\n      if (index != -1) {\r\n        _userVehicles[index] = vehicle;\r\n      }\r\n      if (_selectedVehicle?.id == vehicle.id) {\r\n        _selectedVehicle = vehicle;\r\n      }\r\n    } catch (e) {\r\n      _error = 'Failed to update vehicle: $e';\r\n    } finally {\r\n      _isLoading = false;\r\n      notifyListeners();\r\n    }\r\n  }\r\n\r\n  Future<void> deleteVehicle(String vehicleId) async {\r\n    _isLoading = true;\r\n    _error = null;\r\n    notifyListeners();\r\n\r\n    try {\r\n      await _vehicleRepository.deleteVehicle(vehicleId);\r\n      _userVehicles.removeWhere((v) => v.id == vehicleId);\r\n      if (_selectedVehicle?.id == vehicleId) {\r\n        _selectedVehicle = null;\r\n      }\r\n    } catch (e) {\r\n      _error = 'Failed to delete vehicle: $e';\r\n    } finally {\r\n      _isLoading = false;\r\n      notifyListeners();\r\n    }\r\n  }\r\n\r\n  void selectVehicle(VehicleModel vehicle) {\r\n    _selectedVehicle = vehicle;\r\n    notifyListeners();\r\n  }\r\n\r\n  void clearSelectedVehicle() {\r\n    _selectedVehicle = null;\r\n    notifyListeners();\r\n  }\r\n}"
+        }
+    ]
+}
