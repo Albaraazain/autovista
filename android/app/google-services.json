@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "594164044868",
+    "project_id": "autovista-3b74c",
+    "storage_bucket": "autovista-3b74c.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:594164044868:android:65bff831311a94eb571811",
+        "android_client_info": {
+          "package_name": "com.example.autovista"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDvLCOg30atY-CkQJRmp2F6cY24czQRMKc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

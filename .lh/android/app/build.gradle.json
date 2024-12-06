@@ -1,0 +1,18 @@
+{
+    "sourceFile": "android/app/build.gradle",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 0,
+            "patches": [
+                {
+                    "date": 1733503717479,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                }
+            ],
+            "date": 1733503717479,
+            "name": "Commit-0",
+            "content": "plugins {\r\n    id \"com.android.application\"\r\n    id \"kotlin-android\"\r\n    id \"dev.flutter.flutter-gradle-plugin\"\r\n    id \"com.google.gms.google-services\"  // Move this to plugins block\r\n}\r\n\r\nandroid {\r\n    namespace = \"com.example.autovista\"\r\n    compileSdk = flutter.compileSdkVersion\r\n    ndkVersion = flutter.ndkVersion\r\n\r\n    compileOptions {\r\n        sourceCompatibility = JavaVersion.VERSION_1_8\r\n        targetCompatibility = JavaVersion.VERSION_1_8\r\n    }\r\n\r\n    kotlinOptions {\r\n        jvmTarget = '1.8'\r\n    }\r\n\r\n    defaultConfig {\r\n        applicationId = \"com.example.autovista\"\r\n        minSdk = 21  // Set minimum SDK version explicitly for Firebase\r\n        targetSdk = flutter.targetSdkVersion\r\n        versionCode = flutter.versionCode\r\n        versionName = flutter.versionName\r\n        multiDexEnabled = true  // Enable multidex support\r\n    }\r\n\r\n    buildTypes {\r\n        release {\r\n            signingConfig = signingConfigs.debug\r\n        }\r\n    }\r\n}\r\n\r\nflutter {\r\n    source = \"../..\"\r\n}\r\n\r\ndependencies {\r\n    implementation platform('com.google.firebase:firebase-bom:32.7.0')\r\n    implementation 'com.google.firebase:firebase-analytics'\r\n    implementation 'com.google.firebase:firebase-auth'\r\n    implementation 'com.google.firebase:firebase-firestore'\r\n    implementation 'com.android.support:multidex:1.0.3'\r\n}"
+        }
+    ]
+}

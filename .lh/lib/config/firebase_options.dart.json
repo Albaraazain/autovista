@@ -1,0 +1,18 @@
+{
+    "sourceFile": "lib/config/firebase_options.dart",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 0,
+            "patches": [
+                {
+                    "date": 1733502420979,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                }
+            ],
+            "date": 1733502420979,
+            "name": "Commit-0",
+            "content": "// lib/config/firebase_options.dart\r\nimport 'package:firebase_core/firebase_core.dart';\r\n\r\nclass DefaultFirebaseConfig {\r\n  static FirebaseOptions get platformOptions {\r\n    return const FirebaseOptions(\r\n      apiKey: 'AIzaSyDvLCOg30atY-CkQJRmp2F6cY24czQRMKc',\r\n      appId: '1:594164044868:android:65bff831311a94eb571811',\r\n      messagingSenderId: '594164044868',\r\n      projectId: 'autovista-3b74c',\r\n      storageBucket: 'autovista-3b74c.firebasestorage.app',\r\n    );\r\n  }\r\n}\r\n"
+        }
+    ]
+}

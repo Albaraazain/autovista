@@ -1,0 +1,18 @@
+{
+    "sourceFile": "lib/models/user_model.dart",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 0,
+            "patches": [
+                {
+                    "date": 1733504033436,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                }
+            ],
+            "date": 1733504033436,
+            "name": "Commit-0",
+            "content": "// lib/models/user_model.dart\r\nclass UserModel {\r\n  final String uid;\r\n  final String name;\r\n  final String email;\r\n  final String location;\r\n  final String? profileImageUrl;\r\n\r\n  UserModel({\r\n    required this.uid,\r\n    required this.name,\r\n    required this.email,\r\n    required this.location,\r\n    this.profileImageUrl,\r\n  });\r\n\r\n  Map<String, dynamic> toMap() {\r\n    return {\r\n      'uid': uid,\r\n      'name': name,\r\n      'email': email,\r\n      'location': location,\r\n      'profile_image_url': profileImageUrl ?? '',\r\n      'created_at': DateTime.now().toIso8601String(),\r\n    };\r\n  }\r\n\r\n  factory UserModel.fromMap(Map<String, dynamic> map) {\r\n    return UserModel(\r\n      uid: map['uid'] ?? '',\r\n      name: map['name'] ?? '',\r\n      email: map['email'] ?? '',\r\n      location: map['location'] ?? '',\r\n      profileImageUrl: map['profile_image_url'],\r\n    );\r\n  }\r\n}\r\n"
+        }
+    ]
+}

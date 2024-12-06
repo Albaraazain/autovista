@@ -1,0 +1,18 @@
+{
+    "sourceFile": "android/local.properties",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 0,
+            "patches": [
+                {
+                    "date": 1733501913650,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                }
+            ],
+            "date": 1733501913650,
+            "name": "Commit-0",
+            "content": "sdk.dir=C:\\\\Users\\\\Pc\\\\AppData\\\\Local\\\\Android\\\\Sdk\nflutter.sdk=C:\\\\src\\\\flutter_windows_3.24.3-stable\\\\flutter\nflutter.buildMode=debug\nflutter.versionName=1.0.0\nflutter.versionCode=1"
+        }
+    ]
+}
