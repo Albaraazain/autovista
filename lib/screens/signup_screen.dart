@@ -1,7 +1,8 @@
-import 'package:autovista/services/auth_service';
+// lib/screens/signup_screen.dart
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:provider/provider.dart';
+import '../providers/auth_provider.dart' as app_auth;
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({Key? key}) : super(key: key);
@@ -17,75 +18,47 @@ class _SignupScreenState extends State<SignupScreen> {
   final _locationController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
-  final FirebaseAuth _auth = FirebaseAuth.instance; // Firebase Auth instance
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance; // Firestore instance
-
-  bool _isLoading = false;
-
-  Future<void> _registerUser() async {
-    if (!_formKey.currentState!.validate()) {
-      return;
-    }
-
-    setState(() => _isLoading = true);
+  Future<void> _registerUser(BuildContext context) async {
+    if (!_formKey.currentState!.validate()) return;
 
     try {
-      final authService = AuthService();
-      final userCredential = await authService.signUp(
-        name: _nameController.text,
-        email: _emailController.text,
+      final authProvider = context.read<app_auth.AuthProvider>();
+      await authProvider.signUp(
+        email: _emailController.text.trim(),
         password: _passwordController.text,
-        location: _locationController.text,
+        name: _nameController.text.trim(),
+        location: _locationController.text.trim(),
       );
 
       if (!mounted) return;
 
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Registration successful!')),
-      );
-
-      Navigator.pushReplacementNamed(
-        context,
-        '/home',
-        arguments: userCredential.user?.uid,
+        const SnackBar(content: Text("Registration successful!")),
       );
     } on FirebaseAuthException catch (e) {
-      if (!mounted) return;
+      String errorMessage = "An error occurred";
+      if (e.code == 'email-already-in-use') {
+        errorMessage = "This email is already in use.";
+      } else if (e.code == 'weak-password') {
+        errorMessage = "The password is too weak.";
+      } else if (e.code == 'invalid-email') {
+        errorMessage = "The email address is not valid.";
+      }
 
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(_getErrorMessage(e))),
+        SnackBar(content: Text(errorMessage)),
       );
     } catch (e) {
-      if (!mounted) return;
-
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Registration failed: ${e.toString()}')),
+        SnackBar(content: Text("An error occurred: $e")),
       );
-    } finally {
-      if (mounted) {
-        setState(() => _isLoading = false);
-      }
-    }
-  }
-
-
-  String _getErrorMessage(FirebaseAuthException e) {
-    switch (e.code) {
-      case 'email-already-in-use':
-        return 'This email is already registered';
-      case 'invalid-email':
-        return 'Please enter a valid email address';
-      case 'operation-not-allowed':
-        return 'Email/password accounts are not enabled';
-      case 'weak-password':
-        return 'Please enter a stronger password';
-      default:
-        return 'Registration failed: ${e.message}';
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final authProvider = context.watch<app_auth.AuthProvider>();
+
     return Scaffold(
       appBar: AppBar(
         title: const Text("Sign Up"),
@@ -103,6 +76,8 @@ class _SignupScreenState extends State<SignupScreen> {
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return "Please enter your name";
+                    } else if (value.length < 2) {
+                      return "Name must be at least 2 characters";
                     }
                     return null;
                   },
@@ -147,15 +122,18 @@ class _SignupScreenState extends State<SignupScreen> {
                   },
                 ),
                 const SizedBox(height: 24),
-                _isLoading
+                authProvider.isLoading
                     ? const CircularProgressIndicator()
                     : ElevatedButton(
-                  onPressed: () async {
-                    if (_formKey.currentState!.validate()) {
-                      await _registerUser();
-                    }
+                        onPressed: () => _registerUser(context),
+                        child: const Text("Sign Up"),
+                      ),
+                const SizedBox(height: 16),
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context); // Return to login screen
                   },
-                  child: const Text("Sign Up"),
+                  child: const Text("Already have an account? Login"),
                 ),
               ],
             ),
